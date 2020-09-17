@@ -51,8 +51,11 @@ Compiling & Running
 
 After you have accepted this assignment on the course's GitHub Classroom page,
 clone it to your machine. First you have to generate the build system using
-[CMake](https://cmake.org/). Make sure you have it installed! Then, run the
-following commands:
+[CMake](https://cmake.org/). Make sure you have it installed!  If you are
+working locally, you will also need an OpenMP compatible compiler and the CUDA
+framework installed compiler.
+
+Then, run the following commands:
 
 ```bash
 # Where the build will live
