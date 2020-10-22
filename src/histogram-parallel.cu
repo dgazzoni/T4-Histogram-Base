@@ -1,7 +1,7 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/time.h>
+#include <omp.h>
 
 #define COMMENT "Histogram_GPU"
 #define RGB_COMPONENT_COLOR 255
@@ -14,16 +14,6 @@ typedef struct {
   int x, y;
   PPMPixel *data;
 } PPMImage;
-
-double rtclock() {
-  struct timezone Tzp;
-  struct timeval Tp;
-  int stat;
-  stat = gettimeofday(&Tp, &Tzp);
-  if (stat != 0)
-    printf("Error return from gettimeofday: %d", stat);
-  return (Tp.tv_sec + Tp.tv_usec * 1.0e-6);
-}
 
 static PPMImage *readPPM(const char *filename) {
   char buff[16];
@@ -103,8 +93,12 @@ int main(int argc, char *argv[]) {
   int i;
   char filename[255];
 
-  scanf("%s", filename);
-  PPMImage *image = readPPM(filename);
+  if (argc < 2) {
+    fprintf(stderr, "Error: missing path to input file\n");
+    return 1;
+  }
+
+  PPMImage *image = readPPM(argv[1]);
 
   float *h = (float *)malloc(sizeof(float) * 64);
 
@@ -112,9 +106,9 @@ int main(int argc, char *argv[]) {
   for (i = 0; i < 64; i++)
     h[i] = 0.0;
 
-  t_start = rtclock();
+  t_start = omp_get_wtime();
   Histogram<<<1, 1>>>(image, h);
-  t_end = rtclock();
+  t_end = omp_get_wtime();
 
   for (i = 0; i < 64; i++) {
     printf("%0.3f ", h[i]);
