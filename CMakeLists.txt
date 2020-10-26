@@ -11,7 +11,7 @@ add_executable(parallel src/histogram-parallel.cu)
 
 if(UNIX)
     target_link_libraries(serial m)
-    target_link_libraries(parallel)
+    target_link_libraries(parallel m)
 endif()
 
 target_link_libraries(serial
